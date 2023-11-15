@@ -24,10 +24,8 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
   late ScrollController _scrollController;
   late TextEditingController _reviewController;
 
-  String _name = 'fahmi';
+  String _name ='fahmi';
   String _review = '';
-  //String _recipe = '';
-
 
 
   @override
@@ -35,7 +33,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
     super.initState();
     _reviewController = TextEditingController();
 
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     _scrollController = ScrollController(initialScrollOffset: 0.0);
     _scrollController.addListener(() {
       changeAppBarColor(_scrollController);
@@ -70,13 +68,13 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
   }
 
   Future<void> _sendReviewData() async {
+
     final Map<String, dynamic> rec = {
       "name": _name,
-      "review": _review,
-     // "recipe": _recipe
+      "review":_review,
     };
-    developer.log(rec.toString(), name: "add recipe var");
 
+    //developer.log( name: "add recipe var");
     final response = await ReviewClient().addReview(rec);
 
   }
@@ -116,12 +114,8 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
                 Navigator.of(context).pop();
               },
             ),
-            actions: [
-              IconButton(
-                  onPressed: () {},
-                  icon: SvgPicture.asset('assets/icons/bookmark.svg',
-                      color: Colors.white)),
-            ],
+
+
           ),
         ),
       ),
@@ -167,6 +161,7 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
                               onPressed: () {
                                 Navigator.of(context).pop();
                               },
+
                               child: Text('cancel'),
                               style: TextButton.styleFrom(
                                 foregroundColor: Colors.grey[600],
@@ -336,17 +331,63 @@ class _RecipeDetailPageState extends State<RecipeDetailPage>
               ),
               // Tutorials
               // Reviews
-              widget.data.reviews != null
-                  ? ListView.builder(
+           /*   FutureBuilder<dynamic>(
+                future: ReviewClient().getAllReviews(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    developer.log(snapshot.error.toString(), name: "home error");
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data is! List<Review>) {
+                    return Center(child: Text('No data available or data is not of type List<Review>'));
+                  } else {
+                    final List<Review> data = snapshot.data as List<Review>;
+                    return ListView.separated(
                       shrinkWrap: true,
-                      padding: EdgeInsets.zero,
-                      itemCount: widget.data.reviews!.length,
+                      itemCount: data.length,
                       physics: NeverScrollableScrollPhysics(),
-                      itemBuilder: (context, index) {
-                        return ReviewTile(data: widget.data.reviews![index]);
+                      separatorBuilder: (context, index) {
+                        return SizedBox(height: 16);
                       },
-                    )
-                  : SizedBox()
+                      itemBuilder: (context, index) {
+                        return ReviewTile(
+                          data: data[index],
+                        );
+                      },
+                    );
+                  }
+                },
+              ),*/
+              FutureBuilder(
+                future: ReviewClient().getAllReviews(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    developer.log(snapshot.error.toString(),
+                        name: "home error");
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData) {
+                    return Center(child: Text('No data available'));
+                  } else {
+                    final data = snapshot.data!;
+                    return ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: data.length,
+                      physics: NeverScrollableScrollPhysics(),
+                      separatorBuilder: (context, index) {
+                        return SizedBox(height: 16);
+                      },
+                      itemBuilder: (context, index) {
+                        return ReviewTile(
+                          data: data[index],
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
             ],
           ),
         ],

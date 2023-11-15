@@ -12,7 +12,9 @@ import 'package:hungry/utils/AppColor.dart';
 import '../../models/core/recipe.dart';
 
 class EditRecipeScreen extends StatefulWidget {
-  const EditRecipeScreen({Key? key}) : super(key: key);
+  final Recipe data;
+
+  const EditRecipeScreen({required this.data, Key? key}) : super(key: key);
 
   @override
   State<EditRecipeScreen> createState() => _EditRecipeScreenState();
@@ -41,11 +43,22 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    final recipe = widget.data;
+
     _ingredientNameController = TextEditingController();
-    _recipeNameController = TextEditingController();
-    _caloriesCountController = TextEditingController();
-    _cookingTimeController = TextEditingController();
-    _descriptionController = TextEditingController();
+
+    _recipeNameController = TextEditingController(text: recipe.name);
+    _caloriesCountController =
+        TextEditingController(text: "${recipe.calories}");
+    _cookingTimeController =
+        TextEditingController(text: "${recipe.cookingTime}");
+    _descriptionController =
+        TextEditingController(text: "${recipe.description}");
+
+    _name = recipe.name;
+    _desc = recipe.description;
+    _calories = recipe.calories;
+    _cookingTime = recipe.cookingTime;
   }
 
   @override
@@ -70,52 +83,52 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
     }
   }
 
-  // Future<void> _sendRecipeData() async {
-  //   // Prepare your recipe data here
-  //   List<Map<String, dynamic>> formattedIngredients =
-  //   _ingredients.map((ingredient) {
-  //     // Split the ingredient string to extract name and quantity
-  //     List<String> parts = ingredient.split(' ');
-  //     String name = parts[0];
-  //     String quantity = parts[1].replaceAll('(', '').replaceAll(')', '');
+  Future<void> _sendRecipeData() async {
+    // Prepare your recipe data here
+    List<Map<String, dynamic>> formattedIngredients =
+        _ingredients.map((ingredient) {
+      // Split the ingredient string to extract name and quantity
+      List<String> parts = ingredient.split(' ');
+      String name = parts[0];
+      String quantity = parts[1].replaceAll('(', '').replaceAll(')', '');
 
-  //     // Format the ingredient according to your backend schema
-  //     return {
-  //       'name': name,
-  //       'quantity': quantity,
-  //     };
-  //   }).toList();
+      // Format the ingredient according to your backend schema
+      return {
+        'name': name,
+        'quantity': quantity,
+      };
+    }).toList();
 
-  //   final finalIngredients =
-  //   formattedIngredients.map((e) => Ingredient.fromJson(e)).toList();
+    final finalIngredients =
+        formattedIngredients.map((e) => Ingredient.fromJson(e)).toList();
 
-  //   // Send the recipe data to the server
+    // Send the recipe data to the server
 
-  //   final Map<String, dynamic> rec = {
-  //     "name": _name,
-  //     "description": _desc,
-  //     "ingredients": finalIngredients,
-  //     "cookingTime": _cookingTime,
-  //     "calories": _calories,
-  //   };
+    final Map<String, dynamic> rec = {
+      "name": _name,
+      "description": _desc,
+      "ingredients": finalIngredients,
+      "cookingTime": _cookingTime,
+      "calories": _calories,
+    };
 
-  //   developer.log(rec.toString(), name: "add recipe var");
+    developer.log(rec.toString(), name: "add recipe var");
 
-  //   final response = await RecipeClient().addRecipe(rec);
+    final response = await RecipeClient().updateRecipe(widget.data.id!, rec);
 
-  //   if (response.error != null) {
-  //     developer.log(response.error!, name: "ADD RECIPE");
-  //   } else {
-  //     final String recId = response.id!;
+    if (response.error != null) {
+      developer.log(response.error!, name: "ADD RECIPE");
+      return;
+    }
 
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       SnackBar(
-  //         content: Text(response.message!),
-  //       ),
-  //     );
-  //     await _uploadImage(recId);
-  //   }
-  // }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        
+        content: Center(child: Text(response.message!)),
+      ),
+    );
+    await _uploadImage(response.id!);
+  }
 
   Future<void> _uploadImage(String id) async {
     if (_selectedImgPath == null) return;
@@ -135,12 +148,12 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
 
   Future<void> _selectImage() async {
     final pickedFile =
-    await ImagePicker().pickImage(source: ImageSource.gallery);
+        await ImagePicker().pickImage(source: ImageSource.gallery);
 
     if (pickedFile == null) return;
 
     String pathToFolder =
-    await InitConfiguration.createImagesFolderInAppDocDir();
+        await InitConfiguration.createImagesFolderInAppDocDir();
     String imageName = DateTime.now().toString().substring(0, 19);
     pickedFile.saveTo('$pathToFolder$imageName.jpeg');
 
@@ -158,7 +171,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
         automaticallyImplyLeading: true,
         elevation: 5,
         title: Text(
-          'Add recipe',
+          'Edit recipe',
           style: TextStyle(
             fontFamily: 'inter',
             fontWeight: FontWeight.w400,
@@ -185,13 +198,13 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
                         height: 150,
                         child: _selectedImgPath != null
                             ? Image.file(
-                          File(_selectedImgPath!),
-                          fit: BoxFit.cover,
-                        )
+                                File(_selectedImgPath!),
+                                fit: BoxFit.cover,
+                              )
                             : Image.asset(
-                          "images/placeholder.jpg",
-                          fit: BoxFit.cover,
-                        ),
+                                "images/placeholder.jpg",
+                                fit: BoxFit.cover,
+                              ),
                       ),
                     ),
                   ],
@@ -213,7 +226,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
                       borderSide: BorderSide(
                           color: Colors.indigo,
                           width:
-                          2.0), // Customize the border color and width when the TextField is focused
+                              2.0), // Customize the border color and width when the TextField is focused
                     ),
                     hintText: 'Kouskous',
                   ),
@@ -245,7 +258,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
                       borderSide: BorderSide(
                           color: Colors.indigo,
                           width:
-                          2.0), // Customize the border color and width when the TextField is focused
+                              2.0), // Customize the border color and width when the TextField is focused
                     ),
                     hintText: 'Le KousKous est un plat tunisien',
                   ),
@@ -274,14 +287,14 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
                             borderSide: BorderSide(
                                 color: AppColor.primary,
                                 width:
-                                2.0), // Customize the border color and width
+                                    2.0), // Customize the border color and width
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0),
                             borderSide: BorderSide(
                                 color: Colors.indigo,
                                 width:
-                                2.0), // Customize the border color and width when the TextField is focused
+                                    2.0), // Customize the border color and width when the TextField is focused
                           ),
                           hintText: '1000...2500',
                         ),
@@ -309,14 +322,14 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
                             borderSide: BorderSide(
                                 color: AppColor.primary,
                                 width:
-                                2.0), // Customize the border color and width
+                                    2.0), // Customize the border color and width
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0),
                             borderSide: BorderSide(
                                 color: Colors.indigo,
                                 width:
-                                2.0), // Customize the border color and width when the TextField is focused
+                                    2.0), // Customize the border color and width when the TextField is focused
                           ),
                           hintText: 'In Minutes',
                         ),
@@ -347,14 +360,14 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
                             borderSide: BorderSide(
                                 color: AppColor.primary,
                                 width:
-                                2.0), // Customize the border color and width
+                                    2.0), // Customize the border color and width
                           ),
                           focusedBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10.0),
                             borderSide: BorderSide(
                                 color: Colors.indigo,
                                 width:
-                                2.0), // Customize the border color and width when the TextField is focused
+                                    2.0), // Customize the border color and width when the TextField is focused
                           ),
                           hintText: 'Bsal',
                         ),
@@ -371,7 +384,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
                       },
                       items: List.generate(20, (index) => index + 1)
                           .map<DropdownMenuItem<int>>(
-                            (int value) {
+                        (int value) {
                           return DropdownMenuItem<int>(
                             value: value,
                             child: Text("$value"),
@@ -422,8 +435,7 @@ class _EditRecipeScreenState extends State<EditRecipeScreen> {
                           fontWeight: FontWeight.w600,
                           fontFamily: 'inter'),
                     ),
-                    onPressed:(){},
-                    // () async => await _sendRecipeData(),
+                    onPressed: () async => await _sendRecipeData(),
                     style: ElevatedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10),

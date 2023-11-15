@@ -19,7 +19,7 @@ class ReviewTile extends StatelessWidget {
         children: [
           // Review username
           Text(
-            data.username,
+            data.name,
             style: TextStyle(
                 color: Colors.black,
                 fontFamily: 'inter',

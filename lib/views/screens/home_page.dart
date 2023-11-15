@@ -42,10 +42,10 @@ class _HomePageState extends State<HomePage> {
         title: Text('Lets Eat ?',
             style: TextStyle(fontFamily: 'inter', fontWeight: FontWeight.w700)),
         showProfilePhoto: true,
-        profilePhoto: AssetImage('assets/images/pp.png'),
+        profilePhoto: AssetImage('assets/images/eur.png'),
         profilePhotoOnPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => ProfilePage()));
+          // Navigator.of(context)
+          //     .push(MaterialPageRoute(builder: (context) => ProfilePage()));
         },
       ),
       body: ListView(

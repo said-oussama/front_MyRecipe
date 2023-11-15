@@ -61,7 +61,7 @@ class _ChangePasswordPageState extends State<ChangePasswordPage> {
         body: Container(
           decoration: BoxDecoration(
             image: DecorationImage(
-              image: AssetImage("image/bg.jpg"),
+              image: AssetImage("assets/images/bg.jpg"),
               fit: BoxFit.cover,
             ),
           ),

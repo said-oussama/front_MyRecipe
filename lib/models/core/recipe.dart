@@ -67,18 +67,18 @@ class Recipe {
 }
 
 class Review {
-  final String username;
+  final String name;
   final String review;
-  const Review({required this.username, required this.review});
+  const Review({required this.name, required this.review});
 
   factory Review.fromJson(Map<String, dynamic> json) => Review(
         review: json['review'] as String,
-        username: json['username'] as String,
+        name: json['name'] as String,
       );
 
   Map<String, dynamic> toMap() {
     return {
-      'username': username,
+      'username': name,
       'review': review,
     };
   }
@@ -89,7 +89,7 @@ class Review {
 
   Map<String, dynamic> toJson() {
     return {
-      'username': username,
+      'username': name,
       'review': review,
     };
   }

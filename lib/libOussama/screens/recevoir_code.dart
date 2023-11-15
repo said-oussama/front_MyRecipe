@@ -72,7 +72,7 @@ class _ResetCodePageState extends State<resetCode> {
           decoration: BoxDecoration(
             image: DecorationImage(
               image: AssetImage(
-                  "image/bg.jpg"), // Remplacez "votre_image.png" par le chemin de votre image
+                  "assets/images/bg.jpg"), // Remplacez "votre_image.png" par le chemin de votre image
               fit: BoxFit.cover, // Pour que l'image couvre tout l'écran
             ),
           ),
@@ -216,7 +216,7 @@ class _ChangePasswordPageState extends State<MonNouveauPasswordPage> {
           decoration: BoxDecoration(
             image: DecorationImage(
               image: AssetImage(
-                  "image/bg.jpg"), // Remplacez "votre_image.png" par le chemin de votre image
+                  "assets/images/bg.jpg"), // Remplacez "votre_image.png" par le chemin de votre image
               fit: BoxFit.cover, // Pour que l'image couvre tout l'écran
             ),
           ),
